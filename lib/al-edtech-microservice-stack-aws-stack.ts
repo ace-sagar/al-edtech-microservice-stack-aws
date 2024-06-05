@@ -16,7 +16,8 @@ export class AlEdtechMicroserviceStackAwsStack extends cdk.Stack {
     new cdk.aws_s3.Bucket(this, 'data-warehouse',{
         versioned: true,
         removalPolicy: cdk.RemovalPolicy.DESTROY,
-        autoDeleteObjects: true
+        autoDeleteObjects: true,
+        bucketName: 'updatedbucket-al-2024-delete-this'
     })
   }
 }
