@@ -15,7 +15,7 @@ export class NetworkStack extends Stack {
         this.vpc = new aws_ec2.Vpc(this, 'VpcDemo',{
             vpcName: 'VpcDemo',
             maxAzs: 1,
-            cidr: props.cidr,
+            cidr: props.cidr, // Classless Inter-Domain Routing Address
             // ipAddresses: props.ipAddresses,
             subnetConfiguration: [
                 {
@@ -27,6 +27,9 @@ export class NetworkStack extends Stack {
                     name: 'PrivateSubnet',
                     cidrMask: 24,
                     subnetType: aws_ec2.SubnetType.PRIVATE_WITH_EGRESS, // PRIVATE_WITH_NAT - Depcrecated
+                    // A NAT gateway is a Network Address Translation (NAT) service. You can use a NAT gateway so that instances 
+                    // in a private subnet can connect to services outside your VPC but external services cannot initiate a 
+                    // connection with those instances.
                 },
                 {
                     name: 'IsolatedSubnet',

@@ -4,6 +4,7 @@ import * as cdk from 'aws-cdk-lib';
 import { AlEdtechMicroserviceStackAwsStack } from '../lib/al-edtech-microservice-stack-aws-stack';
 import { NetworkStack } from '../lib/network-stack';
 import { ApplicationStack } from '../lib/application-stack';
+import { LambdaStack } from '../lib/lambda-stack';
 
 const app = new cdk.App();
 new AlEdtechMicroserviceStackAwsStack(app, 'AlEdtechMicroserviceStackAwsStack', {
@@ -35,3 +36,6 @@ const application = new ApplicationStack(app, 'ApplicationStack', {
 
 // wait for the network stack to deploy before the application stack
 application.addDependency(network);
+
+// Lambda
+const lambda = new LambdaStack(app, 'LambdaStack', {});
