@@ -1,6 +1,3 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Construct } from 'constructs';
-
 import * as cdk from 'aws-cdk-lib';
 import { aws_ec2 as ec2, aws_dynamodb as dynamodb, aws_iam as iam, aws_lambda as lambda, aws_apigateway as apigateway } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
@@ -8,23 +5,6 @@ import * as path from 'path';
 import { NodejsFunction, NodejsFunctionProps } from 'aws-cdk-lib/aws-lambda-nodejs';
 
 export class AlEdtechMicroserviceStackAwsStack extends cdk.Stack {
-    //   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
-    //     super(scope, id, props);
-
-    //     // The code that defines your stack goes here
-
-    //     // example resource
-    //     // const queue = new sqs.Queue(this, 'AlEdtechMicroserviceStackAwsQueue', {
-    //     //   visibilityTimeout: cdk.Duration.seconds(300)
-    //     // });
-
-    //     new cdk.aws_s3.Bucket(this, 'data-warehouse',{
-    //         versioned: true,
-    //         removalPolicy: cdk.RemovalPolicy.DESTROY,
-    //         autoDeleteObjects: true,
-    //         bucketName: 'updatedbucket-al-2024-delete-this'
-    //     })
-    //   }
     constructor(scope: Construct, id: string, props?: cdk.StackProps) {
         super(scope, id, props);
 
@@ -67,6 +47,7 @@ export class AlEdtechMicroserviceStackAwsStack extends cdk.Stack {
                 sourceMap: true,
                 // Use local bundling to avoid Docker
                 nodeModules: ['aws-sdk'],
+                forceDockerBundling: false // Ensure bundling is done locally
             }
         };
 
