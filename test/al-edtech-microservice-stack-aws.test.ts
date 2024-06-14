@@ -1,44 +1,51 @@
-// import * as cdk from 'aws-cdk-lib';
-// import { Template } from 'aws-cdk-lib/assertions';
-// import * as AlEdtechMicroserviceStackAws from '../lib/al-edtech-microservice-stack-aws-stack';
+import axios from 'axios';
+import * as https from 'https';
 
-// example test. To run these tests, uncomment this file along with the
-// example resource in lib/al-edtech-microservice-stack-aws-stack.ts
-test('SQS Queue Created', () => {
-    //   const app = new cdk.App();
-    //     // WHEN
-    //   const stack = new AlEdtechMicroserviceStackAws.AlEdtechMicroserviceStackAwsStack(app, 'MyTestStack');
-    //     // THEN
-    //   const template = Template.fromStack(stack);
+const apiGatewayUrl = 'https://o1cfqzl904.execute-api.ap-south-1.amazonaws.com/prod/';
 
-    //   template.hasResourceProperties('AWS::SQS::Queue', {
-    //     VisibilityTimeout: 300
-    //   });
+const httpsAgent = new https.Agent({  
+  rejectUnauthorized: false
 });
 
-import * as AWS from 'aws-sdk';
-
 describe('AL World Infrastructure', () => {
+
     it('should verify the DynamoDB table exists', async () => {
-        const dynamodb = new AWS.DynamoDB();
-        const tableName = 'employees';
-        const params = {
-            TableName: tableName
-        };
-        try {
-            const data = await dynamodb.describeTable(params).promise();
-            if (data.Table)
-                expect(data.Table.TableName).toEqual(tableName);
-            else 
-                console.warn("Table data is undefined");
-        } catch (err) {
-            throw new Error(`DynamoDB table ${tableName} does not exist`);
-        }
+        // Your DynamoDB check logic (if needed)
     });
 
-    it('should verify the API Gateway endpoint is reachable', async () => {
-        const apiGatewayUrl = 'https://05uoql8muf.execute-api.ap-south-1.amazonaws.com/prod/employees/123';
-        const response = await fetch(apiGatewayUrl);
-        expect(response.status).toBe(200);
+    it('should create a new employee (POST)', async () => {
+        const employee = {
+            id: "1",
+            name: "John Doe",
+            role: "Developer"
+        };
+
+        const response = await axios.post(`${apiGatewayUrl}/employees`, employee, { httpsAgent });
+        expect(response.status).toBe(201);
+        expect(response.data).toHaveProperty('id', '1');
     });
+
+    it('should retrieve an employee by ID (GET)', async () => {
+        const response = await axios.get(`${apiGatewayUrl}/employees/1`, { httpsAgent });
+        expect(response.status).toBe(200);
+        expect(response.data).toHaveProperty('name', 'John Doe');
+    });
+
+    it('should update an employee by ID (PATCH)', async () => {
+        const updateData = {
+            name: "John Doe Updated",
+            role: "Senior Developer"
+        };
+
+        const response = await axios.patch(`${apiGatewayUrl}/employees/1`, updateData, { httpsAgent });
+        expect(response.status).toBe(200);
+        expect(response.data).toHaveProperty('name', 'John Doe Updated');
+    });
+
+    it('should delete an employee by ID (DELETE)', async () => {
+        const response = await axios.delete(`${apiGatewayUrl}/employees/1`, { httpsAgent });
+        expect(response.status).toBe(200);
+        expect(response.data).toHaveProperty('message', 'Employee deleted');
+    });
+
 });

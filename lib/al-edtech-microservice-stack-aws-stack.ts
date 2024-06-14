@@ -54,16 +54,28 @@ export class AlEdtechMicroserviceStackAwsStack extends cdk.Stack {
         const backendLambda = new NodejsFunction(this, 'BackendLambda', nodeJsFunctionProps);
 
         // API Gateway
-        const api = new apigateway.RestApi(this, 'ALWorldAPI', {
-            restApiName: 'ALWorldAPI',
-            description: 'This service serves the AL World application.'
+        const api = new apigateway.RestApi(this, 'AlEdTechRest', {
+            restApiName: 'AlEdTechRest',
+            description: 'This service serves the AL EdTech application.'
         });
 
-        const getIntegration = new apigateway.LambdaIntegration(backendLambda, {
-            requestTemplates: { 'application/json': '{"statusCode": 200}' }
-        });
+        const employees = api.root.addResource('employees');
+        const employeeById = employees.addResource('{id}'); // Define path parameter
 
-        api.root.addMethod('GET', getIntegration); // GET /
+        // Define Lambda Integrations
+        const getIntegration = new apigateway.LambdaIntegration(backendLambda);
+        const postIntegration = new apigateway.LambdaIntegration(backendLambda);
+        const deleteIntegration = new apigateway.LambdaIntegration(backendLambda);
+        const patchIntegration = new apigateway.LambdaIntegration(backendLambda);
+
+        // Assign methods to Lambda integrations
+        employees.addMethod('POST', postIntegration); // POST /employees
+        employeeById.addMethod('GET', getIntegration); // GET /employees/{id}
+        employeeById.addMethod('DELETE', deleteIntegration); // DELETE /employees/{id}
+        employeeById.addMethod('PATCH', patchIntegration); // PATCH /employees/{id}
+
+        // Grant the backend Lambda access to the DynamoDB table
+        table.grantReadWriteData(backendLambda);
 
         // Security Groups
         const publicInstanceSecurityGroup = new ec2.SecurityGroup(this, 'PublicInstanceSG', {
